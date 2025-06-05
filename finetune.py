@@ -154,7 +154,7 @@ def preprocess(
                 tokenizer(sentence["value"]).input_ids + [im_end] + nl_tokens
             input_id += _input_id
             if role == '<|im_start|>user':
-                _target = [im_start] + [IGNORE_TOKEN_ID] * (len(_input_id)-3) + [im_end] + nl_tokens
+                _target = [im_start] + [IGNORE_TOKEN_ID] * (len(_input_id)-3) + [im_end] + nl_tokens # if the message is from user, no need to add to target and will be ignored
             elif role == '<|im_start|>assistant':
                 _target = [im_start] + [IGNORE_TOKEN_ID] * len(tokenizer(role).input_ids) + \
                     _input_id[len(tokenizer(role).input_ids)+1:-2] + [im_end] + nl_tokens
@@ -162,8 +162,8 @@ def preprocess(
                 raise NotImplementedError
             target += _target
         assert len(input_id) == len(target)
-        input_id += [tokenizer.pad_token_id] * (max_len - len(input_id))
-        target += [IGNORE_TOKEN_ID] * (max_len - len(target))
+        input_id += [tokenizer.pad_token_id] * (max_len - len(input_id)) # padding the input to the max_len
+        target += [IGNORE_TOKEN_ID] * (max_len - len(target)) # padding the target to the max_len
         input_ids.append(input_id[:max_len])
         targets.append(target[:max_len])
     input_ids = torch.tensor(input_ids, dtype=torch.int)
@@ -220,7 +220,7 @@ class LazySupervisedDataset(Dataset):
     def __getitem__(self, i) -> Dict[str, torch.Tensor]:
         if i in self.cached_data_dict:
             return self.cached_data_dict[i]
-
+        # sample one conversation from the dataset
         ret = preprocess([self.raw_data[i]["conversations"]], self.tokenizer, self.max_len)
         ret = dict(
             input_ids=ret["input_ids"][0],
