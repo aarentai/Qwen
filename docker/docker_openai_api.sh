@@ -3,7 +3,7 @@
 # This script will automatically pull docker image from DockerHub, and start a daemon container to run the Qwen-Chat OpenAI API.
 
 IMAGE_NAME=qwenllm/qwen:cu117
-QWEN_CHECKPOINT_PATH=/path/to/Qwen-Chat
+QWEN_CHECKPOINT_PATH=~/.cache/huggingface/hub/models--Qwen--Qwen-7B/snapshots/ef3c5c9c57b252f3149c1408daf4d649ec8b6c85
 PORT=8000
 CONTAINER_NAME=qwen
 
